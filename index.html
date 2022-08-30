@@ -11,6 +11,9 @@
     <div class="card mt-5 col-12 col-md-6 offset-md-3">
         <div class="card-body">
             <h1 class="col-12 text-center">SwollenHippo Login</h1>
+            <div class="d-none d-md-flex justify-content-center">
+                <img src="images/hippo.png" alt="Really Awesome SwollenHippo Logo">
+            </div>
             <form>
                 <input id="txtUsername" aria-label="Username/Email" class="col-12 form-control" placeholder="user@email.com" type="email" />
                 <input id="txtPassword" aira-label="Password" class="col-12 mt-1 form-control" placeholder="password" type="password" />
@@ -20,14 +23,6 @@
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
-    <script>
-        
-        $('#btnLogin').on('click', function(){
-            let strUsername = $('#txtUsername').val();
-            let strPassword = $('#txtPassword').val();
-            console.log(strUsername);
-            console.log(strPassword);
-        })
-    </script>
+    <script src="js/app.js"></script>
 </body>
 </html>
