@@ -1,3 +1,7 @@
+$.getJSON('https://swollenhippo.com/getProfileDetailsByAPIKey.php',{APIKey:'Mickey2022!',Codename:'Duchess'},(result) =>{
+    console.table(result);
+})
+
 $('#btnLogin').on('click', function(){
     let strUsername = $('#txtUsername').val();
     let strPassword = $('#txtPassword').val();
@@ -7,3 +11,5 @@ $('#btnLogin').on('click', function(){
         alert(strUsername + ' entered the password ' + strPassword);
     }
 })
+
+
