@@ -10,35 +10,35 @@
 <body class="container bg-primary">
     <div class="card">
         <div class="card-header">
-            <h3>LastName, FirstName (CodeName)</h3>
+            <h3><span id="txtLastName">LastName</span>, <span id="txtFirstName">FirstName</span> (<span id="txtCodeName">CodeName</span>)</h3>
         </div>
         <div class="card-body">
             <div class="col-12 row">
                 <div class="col-4">
-                    <img src="#">
+                    <img id="imgProfile" class="rounded-circle mw-100" alt="" src="#">
                 </div>
                 <div class="col-8">
                     <h4>Job Details</h4>
-                    <p>Agency</p>
-                    <p>Title</p>
-                    <p>Hire Date</p>
+                    <p id="txtAgency">Agency</p>
+                    <p id="txtTitle">Title</p>
+                    <p id="txtHireDate">Hire Date</p>
                 </div>
             </div>
             <div class="col-12 row">
                 <div class="col-4">
                     <h4>Digital Contact</h4>
-                    <p>Email</p>
-                    <p>Phone</p>
+                    <p id="txtEmail">Email</p>
+                    <p id="txtPhone">Phone</p>
                 </div>
                 <div class="col-4">
                     <h4>Address</h4>
-                    <p>Street Address 1</p>
-                    <p>City, State ZIP</p>
+                    <p id="txtStreetAddress">Street Address 1</p>
+                    <p><span id="txtCity">City</span>, <span id="txtState">State</span> <span id="txtZIP">ZIP</span></p>
                 </div>
                 <div class="col-4">
                     <h4>Emergency Contact</h4>
-                    <p>Name</p>
-                    <p>Phone Number</p>
+                    <p id="txtEmergencyContactName">Name</p>
+                    <p id="txtEmergencyContactPhone">Phone Number</p>
                 </div>
                 
             </div>
@@ -48,5 +48,26 @@
     </div>
     <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
+    <script>
+        $.getJSON('https://swollenhippo.com/getProfileDetailsByAPIKey.php?APIKey=Mickey2022!&Codename=Duchess',(result) =>{
+            let objEmployee = result;
+            $('#txtLastName').text(objEmployee.LastName);
+            $('#txtFirstName').text(objEmployee.FirstName);
+            $('#txtCodeName').text(objEmployee.CodeName);
+            $('#txtAgency').text(objEmployee.Agency);
+            $('#txtTitle').text(objEmployee.Job);
+            $('#txtHireDate').text(objEmployee.HireDate);
+            $('#txtEmail').text(objEmployee.Email);
+            $('#txtPhone').text(objEmployee.Phone);
+            $('#txtStreetAddress').text(objEmployee.Street1);
+            $('#txtCity').text(objEmployee.City);
+            $('#txtState').text(objEmployee.State);
+            $('#txtZIP').text(objEmployee.ZIP);
+            $('#txtEmergencyContactName').text(objEmployee.EContact);
+            $('#txtEmergencyContactPhone').text(objEmployee.EContactNumber);
+            $('#imgProfile').attr('src',objEmployee.Image);
+            $('#imgProfile').attr('alt',objEmployee.FirstName + ' ' + objEmployee.LastName + ' Profile Image');
+        })
+    </script>
 </body>
 </html>
