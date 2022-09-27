@@ -7,8 +7,8 @@
     <title>Employee Profile</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
 </head>
-<body class="container bg-primary vh-100 d-flex justify-content-center align-items-center">
-    <div class="card col-12">
+<body class="container bg-primary vh-100 ">
+    <div id="divCreateUser"  style="display: none;" class="card col-12">
         <div class="card-header">
             <h3>Create Account</h3>
         </div>
@@ -32,13 +32,120 @@
                 </div>
                 <hr>
                 <button class="btn btn-primary col-12 mt-4" id="btnNewUserCreate" type="button">Create user</button>
+                <button class="btn btn-secondary col-12 mt-2 btnToggle" type="button">Cancel</button>
+
             </form>
         </div>
-     </div>
+    </div>
+    <div id="divLogin" class="card col-12 mt-5">
+        <div class="card-header">
+            <h3>Login</h3>
+        </div>
+        <div class="card-body">
+            <form>
+                <div>
+                    <label for="txtLoginUser" class="form-label">Username</label>
+                    <input class="form-control" type="email" placeholder="John@email.com" id="txtLoginUser" aria-label="Username">
+                </div>
+                <div class="mt-3">
+                    <label for="txtLoginPassword" class="form-label">Password</label>
+                    <input class="form-control" placeholder="Password" type="password" id="txtLoginPassword" aria-label="Password">
+                </div>
+                <div>
+                    <button class="btn btn-primary col-12 mt-4" type="button" id="btnLogin">Login</button>
+                    <button class="btn btn-secondary col-12 mt-2 btnToggle" type="button">Create Account</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="divInventory" style="display:none;" class="card col-12 mt-5">
+        <div class="card-header">
+            <h3>Inventory</h3>
+        </div>
+        <div class="card-body">
+            <form>
+                <div>
+                    <label for="txtMake" class="form-label">Make</label>
+                    <input class="form-control" type="text" placeholder="Ford" id="txtMake" aria-label="Username">
+                </div>
+                <div>
+                    <button class="btn btn-primary col-12 mt-4" type="button" id="btnFind">Find</button>
+                    <button class="btn btn-secondary col-12 mt-2" id="btnClear" type="button">Clear</button>
+                </div>
+            </form>
+        </div>
+    </div>
     <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        
+        $('.btnToggle').on('click',function(){
+            $('#divCreateUser').slideToggle();
+            $('#divLogin').slideToggle();
+        })
+        $('#btnClear').on('click',function(){
+            $('#txtMake').val('');
+        })
+        $('#btnLogin').on('click',function(){
+            let blnError = false;
+            let strErrorMessage = '';
+            if($('#txtLoginUser').val().length < 1){
+                blnError = true;
+                strErrorMessage += "<p>Username cannot be blank</p>";
+            }
+            if($('#txtLoginPassword').val().length < 1){
+                blnError = true;
+                strErrorMessage += "<p>Password cannot be blank</p>";
+            }
+            if(blnError == true){
+                Swal.fire({
+                    html: strErrorMessage,
+                    icon: 'error'
+                })
+            } else {
+                $.post("https://swollenhippo.com/ReliableVehicles/api/sessions.php",
+                {email: $('#txtLoginUser').val(), password: $('#txtLoginPassword').val()})
+                .done(function(data){
+                    console.log(data);
+                    const objData = JSON.parse(data);
+                    console.log(objData);
+                    if(objData.SessionID){
+                        sessionStorage.setItem('SessionID',objData.SessionID);
+                        $('#divInventory').slideToggle();
+                        $('#divLogin').slideToggle();
+                    } else {
+                        Swal.fire({
+                            html: '<p>Login is not successful</p>',
+                            icon: 'error'
+                        })
+                    }
+                    
+                })
+            }
+
+        })
+        $('#btnFind').on('click',function(){
+            let blnError = false;
+            let strErrorMessage = '';
+            if($('#txtMake').val().length < 1){
+                blnError = true;
+                strErrorMessage += "<p>Make cannot be blank</p>";
+            }
+            if(blnError == true){
+                Swal.fire({
+                    html: strErrorMessage,
+                    icon: 'error'
+                })
+            } else {
+                $.getJSON('https://swollenhippo.com/ReliableVehicles/api/inventory.php',{session:sessionStorage.getItem('SessionID'),make:$('#txtMake').val()})
+                .done(function(data){
+                    console.table(data);
+                });
+            }
+
+        })
+
         $('#btnNewUserCreate').on('click',function(){
             let blnError = false;
             let strErrorMessage = '';
