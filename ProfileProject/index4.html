@@ -73,19 +73,41 @@
                     <button class="btn btn-secondary col-12 mt-2" id="btnClear" type="button">Clear</button>
                 </div>
             </form>
+            <table id="tblInventory" class="table">
+                <thead>
+                    <tr><th>Make</th><th>Model</th><th>Year</th><th>Mileage</th><th>StockNumber</th></tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        
+        if(sessionStorage.getItem('SessionID')){
+            $.getJSON('https://swollenhippo.com/ReliableVehicles/api/sessions.php',{sessionID:sessionStorage.getItem('SessionID')},function(result){
+                if(result.SessionID){
+                    $('#divInventory').slideToggle();
+                    $('#divLogin').slideToggle();
+                } else {
+                    sessionStorage.removeItem('SessionID');
+                    $('#txtLoginUser').val(localStorage.getItem('Username'));
+                }
+            })
+            
+        } else {
+            $('#txtLoginUser').val(localStorage.getItem('Username'));
+        }
         $('.btnToggle').on('click',function(){
             $('#divCreateUser').slideToggle();
             $('#divLogin').slideToggle();
         })
         $('#btnClear').on('click',function(){
             $('#txtMake').val('');
+            $('#tblInventory tbody').empty()
         })
         $('#btnLogin').on('click',function(){
             let blnError = false;
@@ -112,8 +134,10 @@
                     console.log(objData);
                     if(objData.SessionID){
                         sessionStorage.setItem('SessionID',objData.SessionID);
+                        localStorage.setItem('Username',$('#txtLoginUser').val());
                         $('#divInventory').slideToggle();
                         $('#divLogin').slideToggle();
+
                     } else {
                         Swal.fire({
                             html: '<p>Login is not successful</p>',
@@ -138,9 +162,20 @@
                     icon: 'error'
                 })
             } else {
-                $.getJSON('https://swollenhippo.com/ReliableVehicles/api/inventory.php',{session:sessionStorage.getItem('SessionID'),make:$('#txtMake').val()})
+                $.getJSON('https://swollenhippo.com/ReliableVehicles/api/inventory.php',
+                {session:sessionStorage.getItem('SessionID'),make:$('#txtMake').val()})
                 .done(function(data){
-                    console.table(data);
+                    $('#tblInventory tbody').empty();
+                    if(data.length < 1){
+                        Swal.fire({
+                            icon:'error',
+                            html: '<p>No inventory for this make</p>'
+                        })
+                    }
+                    $.each(data, function(index,vehicle){
+                        let strTableRow = '<tr><td>' + vehicle.Make + '</td><td>' + vehicle.Model + '</td><td>' + vehicle.Year + '</td><td>' + vehicle.Mileage + '</td><td>' + vehicle.StockNumber + '</td></tr>';
+                        $('#tblInventory tbody').append(strTableRow);
+                    })
                 });
             }
 
@@ -191,6 +226,7 @@
                             let objBillybob = JSON.parse(billybob);
                             console.log(objBillybob);
                             sessionStorage.setItem('SessionID',objBillybob.SessionID);
+                            localStorage.setItem('Username',$('#txtNewUserEmail').val());
                         })
                     } else {
                         Swal.fire({
