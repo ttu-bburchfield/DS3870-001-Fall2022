@@ -1,11 +1,63 @@
 // Begin Page Specific Functions
 
 $(document).on('click','#btnAddAccount', function(){
+let blnError = false;
+let strErrorMessage = '';
+
+if($('#txtFirstName').val().length < 1 || $('#txtLastName').val().length < 1 || $('#txtEmail').val().length < 1 || $('#txtPassword').val().length < 1 || $('#txtVerifyPassword').val().length < 1){
+    blnError = true;
+    strErrorMessage += '<p>You must enter all information</p>';
+}
+
+if(doPasswordsMatch($('#txtPassword').val(), $('#txtVerifyPassword').val()) == false){
+    blnError = true;
+    strErrorMessage += '<p>Passwords must match</p>';
+}
+
+if(isValidEmail($('#txtEmail').val()) == false){
+    blnError = true;
+    strErrorMessage += '<p>Email must be real</p>';
+}
+
+if(isValidPassword($('#txtPassword').val()) == false){
+    blnError = true;
+    strErrorMessage += '<p>Password must be complex</p>';
+}
+
+if(blnError == true){
+    Swal.fire({
+        icon: 'error',
+        html: strErrorMessage
+    })
+} else{
+    $.post('https://www.swollenhippo.com/DS3870/Comics/createAccount.php',{strEmail:$('#txtEmail').val(), strFirstName:$('#txtFirstName').val(), strLastName:$('#txtLastName').val(), strPassword:$('#txtPassword').val()})
+    .done(function(result){
+        let objResult = JSON.parse(result);
+        if(objResult.Outcome == 'New User Create'){
+            Swal.fire({
+                icon: 'success',
+                html: '<p>Account Created</p>'
+            })
+        }
+    })
+}
+
 
 })
 
 $(document).on('click','#btnAddCharacter', function(){
-
+    if($('#txtCharacterName').val().length < 1 || $('#txtSuperPower').val().length < 1 || $('#txtLocation').val().length < 1){
+        Swal.fire({
+            icon: 'error',
+            html: '<p>Missing required info</p>'
+        })
+    } else {
+        $.post('https://www.swollenhippo.com/DS3870/Comics/addCharacter.php',{strSessionID:sessionStorage.getItem('CharacterSession'), strName:$('#txtCharacterName').val(), strSuperPower:$('#txtSuperPower').val(), strLocation:$('#txtLocation').val(), strStatus:$('#txtStatus').val()})
+        .done(function(result){
+            fillCharacterTable();
+            clearCharacterFields();
+        })
+    }
 })
 
 $(document).on('click','#btnLogin', function(){
@@ -30,6 +82,7 @@ $(document).on('click','#btnLogin', function(){
         objResult = JSON.parse(result);    
         if(objResult.Outcome != 'Login Failed'){
                 // set your Session Storage Item here
+                sessionStorage.setItem('CharacterSession',objResult.Outcome);
 
                 // then redirect the user to the dashboard
             } else {

@@ -5,6 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Character Database</title>
+    <link rel="stylesheet" href="css/lib/bootstrap.min.css">
+
 </head>
 <body class="bg-primary">
     <div class="card col-12 col-md-8 offset-md-2 mt-3" id="divUserInfo">
@@ -41,7 +43,8 @@
             <div class="form-group mt-2">
                 <label for="selectStatus" class="form-label mb-0">Status</label>
                 <select id="selectStatus" class="form-control">
-                
+                    <option value="Active">Alive</option>
+                    <option value="InActive">Deceased</option>
                 </select>
             </div>
             
@@ -66,8 +69,34 @@
             </table>
         </div>
     </div>
+    <script src="js/lib/jquery-3.6.0.min.js"></script>
+    <script src="js/lib/bootstrap.bundle.min.js"></script>
+    <script src="js/lib/sweetalert.js"></script>
+    <script src="js/app.js"></script>
     <script>
-        
+        if(sessionStorage.getItem('CharacterSession')){
+            if(verifySession(sessionStorage.getItem('CharacterSession'))){
+
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    html: '<p>Saved sesison is invalid</p>'
+                })
+                sessionStorage.removeItem('CharacterSession');
+                //redirect them to login
+                $('#idOfTheLogin').slideToggle();
+                $('#idOfTheDashboard').slideToggle();
+            }
+        } else {
+            //redirect them to login
+            $('#idOfTheLogin').slideToggle();
+            $('#idOfTheDashboard').slideToggle();
+        }
+
+        $('#btnToggleExisting').on('click',function(){
+            $('#divCharacters').slideToggle();
+        })
+
     </script>
 </body>
 </html>
